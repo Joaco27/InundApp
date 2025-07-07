@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Acerca de InundApp</title>
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      background-color: #1e1e1e;
+      font-family: monospace;
+      color: #ffffff;
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .app-header {
+      background-color: #788CFF;
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .app-header h1 {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    .btn-modo-claro {
+      background-color: #ffffff;
+      color: #333;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-modo-claro:hover,
+    .btn-modo-claro:focus {
+      background-color: #e0e0e0;
+      transform: scale(1.05);
+      outline: none;
+    }
+
+    .btn-modo-claro:focus {
+      box-shadow: 0 0 0 3px #788CFF;
+    }
+
+    .app-body {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 2rem;
+      background-color: #ffffff;
+      color: #212529;
+      overflow-y: auto;
+    }
+
+    .app-body h1 {
+      color: #788CFF;
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .app-body p {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 1rem;
+    }
+
+    .app-body ul {
+      padding-left: 1.2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .app-body ul li {
+      margin-bottom: 0.75rem;
+    }
+
+    .btn-volver {
+      background-color: #c62828;
+      color: white;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-weight: bold;
+      font-size: 1rem;
+      text-decoration: none;
+      width: fit-content;
+      transition: background-color 0.3s ease;
+      border: none;
+      display: inline-block;
+    }
+
+    .btn-volver:hover,
+    .btn-volver:focus {
+      background-color: #a22323;
+      outline: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="app" role="main" aria-label="Sección de información sobre InundApp">
+    <!-- Encabezado -->
+    <header class="app-header" role="banner" aria-label="Encabezado con título y configuración de tema">
+      <h1 id="titulo-app">InundApp Villa Elvira</h1>
+      <div class="d-flex gap-2">
+        <button id="modo-btn" class="btn-modo-claro" aria-label="Cambiar a modo claro">☀️ Modo Claro</button>
+        <button id="fuente-btn" class="btn-modo-claro" aria-label="Ajustar tamaño de texto">🔠 Ajustar texto</button>
+      </div>
+    </header>
+
+    <!-- Contenido principal -->
+    <div class="app-body" role="region" aria-label="Descripción de la aplicación">
+      <h1>🌧️ Acerca de InundApp</h1>
+      <p>
+        InundApp Villa Elvira es una aplicación web accesible cuyo objetivo principal es brindar a la comunidad información útil y visual sobre zonas con riesgo de inundación en Villa Elvira, Buenos Aires.
+      </p>
+      <p>
+        A través del mapa interactivo y las secciones disponibles, los usuarios pueden:
+      </p>
+      <ul>
+        <li>Visualizar zonas de riesgo marcadas.</li>
+        <li>Consultar direcciones y teléfonos de refugios cercanos.</li>
+        <li>Acceder a recomendaciones sobre qué hacer ante una emergencia por inundación.</li>
+        <li>Ver contactos de emergencia locales.</li>
+        <li>Agregar observaciones personalizadas sobre el territorio.</li>
+      </ul>
+      <p>
+        Desarrollada por los alumnos Joaquín Tartaruga y Manuel Rubiano para la materia Diseño y Experiencia de Usuario. La aplicación fue desarrollada siguiendo principios de accesibilidad y buenas prácticas de diseño universal.
+      </p>
+      <a class="btn-volver mt-3" href="{{ url_for('main.index') }}">← Volver</a>
+    </div>
+  </div>
+</body>
+</html>

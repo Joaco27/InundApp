@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>InundApp Villa Elvira</title>
+  <meta name="description" content="Aplicación web informativa y accesible sobre zonas de riesgo por inundación en Villa Elvira, Buenos Aires.">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    html, body {
+      height: 100%;
+      margin: 0;
+      background-color: #1e1e1e;
+      font-family: monospace;
+      color: #ffffff;
+    }
+
+    .app {
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+
+    .app-header {
+      background-color: #788CFF;
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    #titulo-app {
+      margin: 0;
+      font-size: 1.8rem;
+    }
+
+    .btn {
+      display: inline-block;
+      font-weight: 700;
+      line-height: 1.5;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid transparent;
+      padding: 0.375rem 0.75rem;
+      font-size: 1rem;
+      border-radius: 0.375rem;
+      transition: background-color 0.15s ease-in-out;
+    }
+
+    .btn-custom {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border-radius: 12px;
+      padding: 10px 15px;
+      font-weight: bold;
+      margin-bottom: 10px;
+      text-decoration: none;
+    }
+
+    .btn-primary { background-color: #0d6efd; color: white; }
+    .btn-info { background-color: #0dcaf0; color: white; }
+    .btn-danger { background-color: #dc3545; color: white; }
+    .btn-success { background-color: #198754; color: white; }
+    .btn-secondary { background-color: #6c757d; color: white; }
+
+    .btn-modo-claro {
+      background-color: #ffffff;
+      color: #333;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .btn-modo-claro:hover,
+    .btn-modo-claro:focus {
+      background-color: #e0e0e0;
+      transform: scale(1.05);
+      outline: none;
+    }
+
+    .btn-modo-claro:focus {
+      box-shadow: 0 0 0 3px #788CFF;
+    }
+
+    .app-body {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    .map-container {
+      flex: 2;
+      display: flex;
+      flex-direction: column;
+      background-color: white;
+      padding: 10px;
+    }
+
+    #map {
+      flex: 1;
+      height: 100%;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .legend {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      font-size: 14px;
+      gap: 8px;
+    }
+
+    .legend img {
+      width: 20px;
+      height: 32px;
+    }
+
+    .sidebar {
+      background-color: #e2e2e2;
+      padding: 15px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .alert-status {
+      background-color: #00c853;
+      color: white;
+      border-radius: 12px;
+      padding: 10px;
+      font-weight: bold;
+      text-align: center;
+      margin-top: auto;
+    }
+
+    .d-flex {
+      display: flex;
+    }
+
+    .gap-2 {
+      gap: 0.5rem;
+    }
+
+    small {
+      font-weight: normal;
+      font-size: 0.85em;
+    }
+  </style>
+</head>
+<body>
+  <div class="app" role="main" aria-label="Aplicación web sobre zonas de riesgo en Villa Elvira">
+
+    <!-- Encabezado -->
+    <header class="app-header" role="banner" aria-label="Encabezado con título y configuración de tema">
+      <h1 id="titulo-app">InundApp Villa Elvira</h1>
+      <div class="d-flex gap-2">
+        <button id="modo-btn" class="btn btn-modo-claro" aria-label="Cambiar a modo claro">☀️ Modo Claro</button>
+        <button id="fuente-btn" class="btn btn-modo-claro" aria-label="Ajustar tamaño de texto">🔠 Ajustar texto</button>
+      </div>
+    </header>
+    
+    <!-- Contenido principal -->
+    <div class="app-body" role="region" aria-label="Sección principal con mapa y menú lateral">
+      <section class="map-container" aria-label="Mapa de Villa Elvira con zonas de riesgo">
+        <div id="map" role="application" aria-label="Mapa interactivo de Villa Elvira con marcadores de zonas de riesgo"></div>
+        <div class="legend" role="note" aria-label="Indicador visual de zonas de riesgo">
+          <img src="https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png" alt="Marcador rojo indicando zona de riesgo">
+          <span style="color: black;"><strong>Zonas de riesgo</strong></span>
+        </div>
+      </section>
+
+      <!-- Barra lateral -->
+      <nav class="sidebar" role="navigation" aria-label="Menú lateral de opciones">
+        <a class="btn btn-primary btn-custom" aria-label="Ver información sobre los refugios disponibles" href="{{ url_for('main.refugios') }}">🏠 Conocé los refugios</a>
+        <a class="btn btn-info btn-custom" aria-label="Ver qué hacer en caso de inundación" href="{{ url_for('main.que_hacer') }}">ℹ️ ¿Qué hacer en caso de inundación?</a>
+        <a class="btn btn-danger btn-custom" aria-label="Ver contactos de emergencia" href="{{ url_for('main.contactos') }}">☎️ Contactos de emergencia</a>
+        <a class="btn btn-success btn-custom" aria-label="Agregar una observación sobre una zona de riesgo" href="{{ url_for('main.obs') }}">➕ Informar Zona de Riesgo</a>
+        <a class="btn btn-secondary btn-custom" aria-label="Ver información sobre el objetivo de la aplicación" href="{{ url_for('main.about') }}">ℹ️ Acerca de InundApp</a>
+
+        <div class="alert-status" role="status" aria-live="polite" aria-label="Estado de alertas actualizado">
+          ✅ Sin Alertas <br>
+          <small>Última Actualización: 10:33</small>
+        </div>
+      </nav>
+    </div>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('map').setView([-34.9331, -57.9131], 15);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; OpenStreetMap contributors'
+    }).addTo(map);
+
+    const centro = [-34.9331, -57.9131];
+    L.marker(centro).addTo(map).openPopup();
+
+    function generarCoordenadaAleatoria(lat, lng, radio) {
+      const offsetLat = (Math.random() - 0.5) * 2 * radio;
+      const offsetLng = (Math.random() - 0.5) * 2 * radio;
+      return [lat + offsetLat, lng + offsetLng];
+    }
+
+    for (let i = 0; i < 8; i++) {
+      const [lat, lng] = generarCoordenadaAleatoria(centro[0], centro[1], 0.0072);
+      L.marker([lat, lng], {
+        icon: new L.Icon({
+          iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png',
+          iconSize: [25, 41],
+          iconAnchor: [12, 41],
+          popupAnchor: [1, -34]
+        })
+      }).addTo(map).bindPopup("Zona de riesgo");
+    }
+  </script>
+
+  <script>
+    const modoBtn = document.getElementById('modo-btn');
+    const modoGuardado = localStorage.getItem('modo');
+    if (modoGuardado === 'oscuro') {
+      modoBtn.innerHTML = '🌙 Modo Oscuro';
+      modoBtn.setAttribute('aria-label', 'Cambiar a modo oscuro');
+    }
+
+    modoBtn.addEventListener('click', () => {
+      const esClaro = modoBtn.innerHTML.includes('☀️');
+      if (esClaro) {
+        modoBtn.innerHTML = '🌙 Modo Oscuro';
+        modoBtn.setAttribute('aria-label', 'Cambiar a modo oscuro');
+        localStorage.setItem('modo', 'oscuro');
+      } else {
+        modoBtn.innerHTML = '☀️ Modo Claro';
+        modoBtn.setAttribute('aria-label', 'Cambiar a modo claro');
+        localStorage.setItem('modo', 'claro');
+      }
+    });
+
+    const fuenteBtn = document.getElementById('fuente-btn');
+    const fuenteGuardada = localStorage.getItem('textoGrande');
+    if (fuenteGuardada === 'true') {
+      fuenteBtn.setAttribute('aria-label', 'Reducir tamaño de texto');
+      fuenteBtn.innerHTML = '🔡 Texto normal';
+    }
+
+    fuenteBtn.addEventListener('click', () => {
+      const esGrande = fuenteBtn.innerHTML.includes('🔡');
+      if (esGrande) {
+        fuenteBtn.setAttribute('aria-label', 'Aumentar tamaño de texto');
+        fuenteBtn.innerHTML = '🔠 Ajustar texto';
+        localStorage.setItem('textoGrande', 'false');
+      } else {
+        fuenteBtn.setAttribute('aria-label', 'Reducir tamaño de texto');
+        fuenteBtn.innerHTML = '🔡 Texto normal';
+        localStorage.setItem('textoGrande', 'true');
+      }
+    });
+  </script>
+</body>
+</html>
