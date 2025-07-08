@@ -169,7 +169,7 @@
       <h1>💬 Chat de Zonas en Riesgo</h1>
       <div class="chat-container">
         <div id="chat-mensajes" class="chat-mensajes" aria-live="polite">
-          <!-- Mensajes se agregarán acá dinámicamente -->
+          <!-- Mensajes cargados dinámicamente -->
         </div>
         <form id="chat-form" class="chat-formulario" aria-label="Formulario para enviar observaciones">
           <input type="text" id="mensaje" name="mensaje" required placeholder="Ej: Calle 7 entre 78 y 79 con agua acumulada..." />
@@ -186,12 +186,28 @@
     const input = document.getElementById('mensaje');
     const chat = document.getElementById('chat-mensajes');
 
+    // Mensajes precargados de ejemplo
+    const mensajesIniciales = [
+      { hora: "10:15", texto: "Calle 75 y 116 totalmente anegada, el agua llega al cordón." },
+      { hora: "10:18", texto: "Hay ramas tapando la alcantarilla en 122 y 71, no drena el agua." },
+      { hora: "10:21", texto: "Se ve gente con agua entrando en sus casas en 78 e/ 8 y 9. Precaución." },
+      { hora: "10:24", texto: "Confirmo lo de 75 y 116. Difícil de circular incluso con vehículos." },
+      { hora: "10:26", texto: "En la esquina de 13 y 80 hay un auto detenido por la corriente. Evitar la zona." }
+    ];
+
+    mensajesIniciales.forEach(m => {
+      const msg = document.createElement('div');
+      msg.classList.add('mensaje');
+      msg.innerHTML = `<strong>${m.hora}</strong>: ${m.texto}`;
+      chat.appendChild(msg);
+    });
+
     form.addEventListener('submit', e => {
       e.preventDefault();
       const texto = input.value.trim();
       if (!texto) return;
 
-      const hora = new Date().toLocaleTimeString();
+      const hora = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const nuevoMensaje = document.createElement('div');
       nuevoMensaje.classList.add('mensaje');
       nuevoMensaje.innerHTML = `<strong>${hora}</strong>: ${texto}`;
