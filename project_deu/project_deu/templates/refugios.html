@@ -4,17 +4,10 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Ruta segura - InundApp Villa Elvira</title>
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-  />
-  <link
-    rel="stylesheet"
-    href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css"
-  />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.css" />
   <style>
-    html,
-    body {
+    html, body {
       height: 100%;
       margin: 0;
       background-color: white;
@@ -36,6 +29,25 @@
     #titulo-app {
       margin: 0;
       font-size: 1.8rem;
+    }
+
+    .btn-modo-claro {
+      background-color: #ffffff;
+      color: #333;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-weight: bold;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .btn-modo-claro:hover,
+    .btn-modo-claro:focus {
+      background-color: #e0e0e0;
+      transform: scale(1.05);
+      outline: none;
     }
 
     .btn-volver {
@@ -72,6 +84,7 @@
       color: white;
       font-family: monospace;
     }
+
     .leaflet-popup-tip {
       background: #222;
     }
@@ -83,8 +96,12 @@
   </style>
 </head>
 <body>
-  <header class="app-header" role="banner" aria-label="Encabezado con título">
+  <header class="app-header" role="banner" aria-label="Encabezado con título y configuración de tema">
     <h1 id="titulo-app">InundApp Villa Elvira</h1>
+    <div class="d-flex gap-2">
+      <button id="modo-btn" class="btn-modo-claro" aria-label="Cambiar a modo claro">☀️ Modo Claro</button>
+      <button id="fuente-btn" class="btn-modo-claro" aria-label="Ajustar tamaño de texto">🔠 Ajustar texto</button>
+    </div>
   </header>
 
   <div id="map" role="application" aria-label="Mapa interactivo con ruta segura" style="flex-grow: 1;"></div>
@@ -93,9 +110,9 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.min.js"></script>
+  <script src="/static/js/main.js"></script>
 
   <script>
-    // Refugios con nombres y coordenadas
     const refugios = [
       { name: "Refugio San Martín", coords: [-34.9295, -57.9130] },
       { name: "Refugio El Progreso", coords: [-34.9320, -57.9200] },
@@ -104,7 +121,6 @@
       { name: "Refugio Villa Verde", coords: [-34.9400, -57.9140] },
     ];
 
-    // Zonas de riesgo fijas (coordenadas)
     const zonasDeRiesgo = [
       [-34.9335, -57.9150],
       [-34.9310, -57.9160],
@@ -113,20 +129,17 @@
     ];
 
     const ubicacionActual = [-34.9331, -57.9131];
-
     const map = L.map("map").setView(ubicacionActual, 15);
 
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution: "&copy; OpenStreetMap contributors",
     }).addTo(map);
 
-    // Marcador ubicación actual
     L.marker(ubicacionActual)
       .addTo(map)
       .bindPopup("Ubicación actual")
       .openPopup();
 
-    // Marcadores zonas de riesgo (rojos)
     zonasDeRiesgo.forEach(([lat, lng]) => {
       L.marker([lat, lng], {
         icon: new L.Icon({
@@ -141,7 +154,6 @@
         .bindPopup("Zona de riesgo");
     });
 
-    // Función para calcular refugio más cercano (distancia euclidiana)
     function refugioMasCercano(origen, refugios) {
       let minDist = Infinity;
       let refugioCercano = null;
@@ -157,14 +169,10 @@
       return refugioCercano;
     }
 
-    // Refugio inicial seleccionado = más cercano
     let refugioSeleccionado = refugioMasCercano(ubicacionActual, refugios);
-
-    // Control de ruta para poder actualizarla
     let routingControl = null;
 
     function generarRuta(destino) {
-      // Si ya hay ruta, la removemos para actualizar
       if (routingControl) {
         map.removeControl(routingControl);
       }
@@ -196,10 +204,11 @@
       }).addTo(map);
     }
 
-    // Crear marcadores refugios (azules), con click para actualizar ruta
     refugios.forEach(({ name, coords }) => {
-      // Diferenciar icono del refugio seleccionado (azul claro)
-      const esSeleccionado = coords[0] === refugioSeleccionado[0] && coords[1] === refugioSeleccionado[1];
+      const esSeleccionado =
+        coords[0] === refugioSeleccionado[0] &&
+        coords[1] === refugioSeleccionado[1];
+
       const iconUrl = esSeleccionado
         ? "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-blue.png"
         : "https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-grey.png";
@@ -220,7 +229,6 @@
         });
     });
 
-    // Generar ruta inicial
     generarRuta(refugioSeleccionado);
   </script>
 </body>

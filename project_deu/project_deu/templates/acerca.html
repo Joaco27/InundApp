@@ -8,9 +8,9 @@
     html, body {
       height: 100%;
       margin: 0;
-      background-color: #1e1e1e;
+      background-color: white;
       font-family: monospace;
-      color: #ffffff;
+      color: black;
     }
 
     .app {
@@ -61,8 +61,8 @@
       display: flex;
       flex-direction: column;
       padding: 2rem;
-      background-color: #ffffff;
-      color: #212529;
+      background-color: white;
+      color: inherit;
       overflow-y: auto;
     }
 
@@ -75,19 +75,13 @@
       gap: 10px;
     }
 
-    .app-body p {
+    .app-body p,
+    .app-body ul,
+    .app-body li {
       font-size: 1.1rem;
       line-height: 1.6;
       margin-bottom: 1rem;
-    }
-
-    .app-body ul {
-      padding-left: 1.2rem;
-      margin-bottom: 1.5rem;
-    }
-
-    .app-body ul li {
-      margin-bottom: 0.75rem;
+      color: inherit;
     }
 
     .btn-volver {
@@ -108,6 +102,11 @@
     .btn-volver:focus {
       background-color: #a22323;
       outline: none;
+    }
+
+    /* Herencia forzada para modo oscuro */
+    .app-body, .app-body * {
+      color: inherit !important;
     }
   </style>
 </head>
@@ -144,5 +143,7 @@
       <a class="btn-volver mt-3" href="{{ url_for('main.index') }}">← Volver</a>
     </div>
   </div>
+
+  <script src="/static/js/main.js"></script>
 </body>
 </html>
